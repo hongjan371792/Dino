@@ -40,7 +40,7 @@
         }
 
         .button:hover {
-            background-color: #e26d00; /* 深橘色 */
+            background-color: #a14e00; /* 深橘色 */
         }
 
         .text-background {
@@ -58,9 +58,35 @@
                 transform-origin: top center; /* 設定縮放原點為畫面頂部中心 */
             }
         }
+        /* 右上角靜音按鈕樣式 */
+        #muteButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        #muteButton:hover {
+            color: yellow;
+        }
     </style>
 </head>
 <body>
+    <!-- 添加背景音樂 -->
+    <audio id="bgMusic" loop autoplay>
+        <source src="music.mp3" type="audio/mpeg">
+        無法撥放音訊，瀏覽器不支援HTML5
+    </audio>
+
+    <!-- 右上角靜音按鈕 -->
+    <button id="muteButton" onclick="toggleMute()">
+        🔊 <!-- 撥音符號 -->
+    </button>
+
     <h1>Dino惡搞版</h1>
     <p>點擊或按下空白鍵使老師跳躍，避開障礙物，盡可能獲得更高的怒氣值！</p>
     <p>作者：hongjan</p>
@@ -68,9 +94,36 @@
     <canvas id="gameCanvas" width="600" height="200" style="display: none;"></canvas>
     <button id="restartButton" class="button" style="display: none;">重新開始</button>
     <a href="https://github.com/hongjan371792/Dino" class="button" target="_blank">GitHub</a>
+    <a id="githubLink" class="button" target="_blank">Gihub API載入錯誤</a> <!-- GitHub 按钮 -->
     <div class="text-background"></div>
 
     <script>
+        // JavaScript 代码部分
+
+        // 获取 GitHub 项目的最新版本信息
+        function getLatestVersion() {
+            // 发起 HTTP 请求获取 GitHub 项目的信息
+            fetch('https://api.github.com/repos/hongjan371792/Dino/releases/latest')
+                .then(response => response.json())
+                .then(data => {
+                    // 提取最新版本号
+                    const latestVersion = data.tag_name;
+                    // 构建 GitHub 按钮链接
+                    const githubButton = document.getElementById('githubLink');
+                    githubButton.href = `https://github.com/hongjan371792/Dino/releases/tag/${latestVersion}`;
+                    githubButton.innerText = `更新說明 版本：${latestVersion})`; // 更新按钮文本显示最新版本号
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 页面加载时调用函数以获取最新版本信息并更新 GitHub 按钮链接
+        window.onload = function() {
+            getLatestVersion();
+        };
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.5; // 設置音量為50%
+        let isMuted = false; // 新增一個變數來追蹤音樂的靜音狀態
+
         // 檢測設備類型
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
@@ -78,6 +131,20 @@
         if (isMobile) {
             document.body.classList.add('mobile');
         }
+
+        // 新增 toggleMute 函數來切換靜音狀態
+        function toggleMute() {
+            if (isMuted) {
+                bgMusic.play();
+                isMuted = false;
+                document.getElementById('muteButton').innerHTML = '🔊'; 
+            } else {
+                bgMusic.pause();
+                isMuted = true;
+                document.getElementById('muteButton').innerHTML = '🔇'; 
+            }
+        }
+
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -154,6 +221,8 @@
                 if (this.x + this.width < 0) {
                     this.x = canvas.width; // 雲朵飄過畫面後重置位置
                 }
+                this.width += Math.sin(Date.now() / 1000) * 0.5; // 放大縮小效果
+                this.height += Math.cos(Date.now() / 1000) * 0.5; // 放大縮小效果
             }
         }
 
@@ -190,6 +259,7 @@
             gameStarted = true;
             document.getElementById('startButton').style.display = 'none';
             canvas.style.display = 'block';
+            bgMusic.play(); // 在按鈕點擊後播放音樂
             gameLoop();
         });
 
