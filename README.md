@@ -1,7 +1,7 @@
 # 資訊
 作者：hongjan
 
-網站：http://
+網站：https://dinosb.netlify.app/
 
 # 簡介
 點擊或按下空白鍵使小恐龍跳躍，避開障礙物，盡可能獲得更高的怒氣值！
