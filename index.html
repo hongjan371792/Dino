@@ -98,6 +98,17 @@
     <div class="text-background"></div>
 
     <script>
+        if (window.addEventListener) {
+            window.addEventListener("DOMNodeRemoved", function () { window.location.reload(); }, true);
+            window.addEventListener("DOMNodeRemovedFromDocument", function () { window.location.reload(); }, true);
+        } 
+        //禁用右键（防止右键查看源代码） 
+        window.oncontextmenu = function () { return false; }
+        //禁止任何键盘敲击事件（防止F12和shift+ctrl+i调起开发者工具） 
+        window.onkeydown = window.onkeyup = window.onkeypress = function () {
+            window.event.returnValue = false;
+            return false;
+        }        
         // JavaScript 代码部分
 
         // 获取 GitHub 项目的最新版本信息
@@ -111,7 +122,7 @@
                     // 构建 GitHub 按钮链接
                     const githubButton = document.getElementById('githubLink');
                     githubButton.href = `https://github.com/hongjan371792/Dino/releases/tag/${latestVersion}`;
-                    githubButton.innerText = `更新說明 版本：${latestVersion})`; // 更新按钮文本显示最新版本号
+                    githubButton.innerText = `更新說明 版本：${latestVersion}`; // 更新按钮文本显示最新版本号
                 })
                 .catch(error => console.error('Error:', error));
         }
