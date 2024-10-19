@@ -1,6 +1,3 @@
-# 資訊
-作者：hongjan
-
 網站：https://dino.sbgames.us.kg/
 
 # 簡介
